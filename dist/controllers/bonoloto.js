@@ -36,18 +36,21 @@ async function getBonolotoReults(req, res) {
             if (result.length === 0 && data.length > 0) {
                 const lastDate = new Date(data[data.length - 1].fecha_sorteo);
                 const newEndDate = (0, date_1.formatDate)(lastDate);
+                if (newEndDate === date_2.LOTTERY_START_DATE) {
+                    console.log("Didn't find a sequence match. Exiting.");
+                    res.status(responseCodes_1.RESPONSE_CODE_OK).json({
+                        result: [],
+                        resultDate: null,
+                        error: null,
+                    });
+                    return;
+                }
                 if (newEndDate.substring(4) === date_2.FIRST_JAN || data.length < 10) {
                     const prevYear = parseInt(startDate.substring(0, 4)) - 1;
-                    startDate = `${prevYear}${date_2.FIRST_JAN}`;
-                    if (startDate < date_2.LOTTERY_START_DATE) {
-                        console.log("Didn't find a sequence match. Exiting.");
-                        res.status(responseCodes_1.RESPONSE_CODE_OK).json({
-                            result: [],
-                            resultDate: null,
-                            error: null,
-                        });
-                        return;
-                    }
+                    startDate =
+                        prevYear === date_2.LOTTERY_START_YEAR
+                            ? date_2.LOTTERY_START_DATE
+                            : `${prevYear}${date_2.FIRST_JAN}`;
                     console.log("Switching startDate to previous year:", startDate);
                     await processData(startDate, newEndDate);
                 }

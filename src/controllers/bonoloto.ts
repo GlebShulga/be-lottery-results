@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import axios from "axios";
 import { formatDate } from "../utils/date";
-import { FIRST_JAN, LOTTERY_START_DATE } from "../constants/date";
+import {
+  FIRST_JAN,
+  LOTTERY_START_DATE,
+  LOTTERY_START_YEAR,
+} from "../constants/date";
 import { RESPONSE_CODE_OK } from "../constants/responseCodes";
 import { convertNumbersToStrings } from "../utils/number";
 
@@ -38,18 +42,22 @@ export async function getBonolotoReults(req: Request, res: Response) {
       if (result.length === 0 && data.length > 0) {
         const lastDate = new Date(data[data.length - 1].fecha_sorteo);
         const newEndDate = formatDate(lastDate);
+
+        if (newEndDate === LOTTERY_START_DATE) {
+          console.log("Didn't find a sequence match. Exiting.");
+          res.status(RESPONSE_CODE_OK).json({
+            result: [],
+            resultDate: null,
+            error: null,
+          });
+          return;
+        }
         if (newEndDate.substring(4) === FIRST_JAN || data.length < 10) {
           const prevYear = parseInt(startDate.substring(0, 4)) - 1;
-          startDate = `${prevYear}${FIRST_JAN}`;
-          if (startDate < LOTTERY_START_DATE) {
-            console.log("Didn't find a sequence match. Exiting.");
-            res.status(RESPONSE_CODE_OK).json({
-              result: [],
-              resultDate: null,
-              error: null,
-            });
-            return;
-          }
+          startDate =
+            prevYear === LOTTERY_START_YEAR
+              ? LOTTERY_START_DATE
+              : `${prevYear}${FIRST_JAN}`;
           console.log("Switching startDate to previous year:", startDate);
           await processData(startDate, newEndDate);
         } else {
