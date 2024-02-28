@@ -103,7 +103,8 @@ async function main() {
             debugLogger("Health check failed: %O", error);
         }
     });
-    exports.app.post("/bonoloto", bonoloto_1.getBonolotoReults);
+    exports.app.post("/bonoloto", bonoloto_1.getBonolotoResults);
+    exports.app.get("/bonoloto", bonoloto_1.getLastBonolotoResults);
 }
 main().catch((error) => {
     console.error(error);

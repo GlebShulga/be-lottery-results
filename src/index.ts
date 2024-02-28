@@ -8,7 +8,10 @@ import {
   RESPONSE_CODE_OK,
   RESPONSE_CODE_SERVER_ERROR,
 } from "./constants/responseCodes";
-import { getBonolotoReults } from "./controllers/bonoloto";
+import {
+  getBonolotoResults,
+  getLastBonolotoResults,
+} from "./controllers/bonoloto";
 
 dotenv.config();
 export const app: Application = express();
@@ -106,7 +109,8 @@ async function main() {
     }
   });
 
-  app.post("/bonoloto", getBonolotoReults);
+  app.post("/bonoloto", getBonolotoResults);
+  app.get("/bonoloto", getLastBonolotoResults);
 }
 
 main().catch((error) => {
