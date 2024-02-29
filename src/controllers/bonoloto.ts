@@ -5,6 +5,7 @@ import {
   FIRST_JAN,
   LOTTERY_START_DATE,
   LOTTERY_START_YEAR,
+  TEN_DAYS,
 } from "../constants/date";
 import { RESPONSE_CODE_OK } from "../constants/responseCodes";
 import { convertNumbersToStrings } from "../utils/number";
@@ -97,7 +98,7 @@ export async function getBonolotoResults(req: Request, res: Response) {
 export async function getLastBonolotoResults(req: Request, res: Response) {
   const endDate = new Date();
   const startDate = new Date();
-  startDate.setDate(endDate.getDate() - 10);
+  startDate.setDate(endDate.getDate() - TEN_DAYS);
   const formattedStartDate = formatDate(startDate);
   const formattedEndDate = formatDate(endDate);
 
